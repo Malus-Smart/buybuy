@@ -142,11 +142,16 @@ if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('DYNO'):
             print(f"  {key}: {value[:50]}..." if len(value) > 50 else f"  {key}: {value}")
     
     # Database configuration for Railway/Heroku
+    # TEMPORARY: Hardcode DATABASE_URL for debugging
+    # Replace with your actual DATABASE_URL from Railway Postgres Variables
+    HARDCODED_DB_URL = "postgresql://postgres:KcyofkyOZRZnKjLhFuvnjPxUHhvhfXWM@postgres.railway.internal:5432/railway"
+    
     # Try multiple environment variable names
     database_url = (
         os.environ.get('DATABASE_URL') or 
         os.environ.get('DATABASE_PRIVATE_URL') or
-        os.environ.get('PGURL')
+        os.environ.get('PGURL') or
+        HARDCODED_DB_URL  # Use hardcoded as last resort
     )
     
     # Or construct from individual components if available
