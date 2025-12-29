@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}订单成功 - BuyBuy{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg text-center p-5" style="border-radius: 20px; border: none;">
+            <div class="mb-4">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 6rem;"></i>
+            </div>
+            
+            <h1 class="mb-3">订单提交成功！</h1>
+            <p class="lead text-muted mb-4">感谢您的购买，我们将尽快为您处理订单。</p>
+            
+            <div class="card bg-light mb-4" style="border-radius: 15px; border: none;">
+                <div class="card-body">
+                    <h4 class="mb-3"><i class="bi bi-info-circle"></i> 订单信息</h4>
+                    <div class="row text-start">
+                        <div class="col-md-6 mb-2">
+                            <strong>订单号：</strong> {{ order.id }}
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <strong>收货人：</strong> {{ order.first_name }} {{ order.last_name }}
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <strong>邮箱：</strong> {{ order.email }}
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <strong>联系电话：</strong> -
+                        </div>
+                        <div class="col-12 mb-2">
+                            <strong>收货地址：</strong> {{ order.address }}, {{ order.city }}, {{ order.postal_code }}
+                        </div>
+                        <div class="col-12">
+                            <strong>订单总额：</strong> <span class="text-primary fs-4">¥{{ order.get_total_cost }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-clock-history"></i> 我们已经收到您的订单，预计3-5个工作日内送达。
+            </div>
+            
+            <div class="d-flex gap-3 justify-content-center">
+                {% if user.is_authenticated %}
+                <a href="{% url 'orders:order_list' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-list-ul"></i> 查看所有订单
+                </a>
+                {% endif %}
+                <a href="{% url 'shop:product_list' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-shop"></i> 继续购物
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

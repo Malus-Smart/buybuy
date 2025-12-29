@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}订单详情 - BuyBuy{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'shop:product_list' %}">首页</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'orders:order_list' %}">我的订单</a></li>
+        <li class="breadcrumb-item active">订单详情</li>
+    </ol>
+</nav>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="text-center mb-4">
+            <i class="bi bi-receipt"></i> 订单详情
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow-sm" style="border-radius: 15px; border: none;">
+            <div class="card-header bg-white" style="border-radius: 15px 15px 0 0;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="bi bi-box-seam"></i> 订单号: {{ order.id }}</h4>
+                    {% if order.paid %}
+                        <span class="badge bg-success fs-6">
+                            <i class="bi bi-check-circle"></i> 已支付
+                        </span>
+                    {% else %}
+                        <span class="badge bg-warning fs-6">
+                            <i class="bi bi-clock"></i> 待支付
+                        </span>
+                    {% endif %}
+                </div>
+                <small class="text-muted">
+                    <i class="bi bi-calendar"></i> {{ order.created|date:"Y年m月d日 H:i" }}
+                </small>
+            </div>
+            <div class="card-body">
+                <h5 class="mb-3"><i class="bi bi-bag"></i> 订单商品</h5>
+                {% for item in order.items.all %}
+                <div class="row mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                    <div class="col-md-2">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" class="img-fluid rounded" alt="{{ item.product.name }}">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 80px;">
+                                <i class="bi bi-image" style="font-size: 2rem; color: #cbd5e1;"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-5">
+                        <h6>{{ item.product.name }}</h6>
+                        <p class="text-muted small mb-0">{{ item.product.category.name }}</p>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <p class="mb-0 text-muted small">单价</p>
+                        <strong>¥{{ item.price }}</strong>
+                    </div>
+                    <div class="col-md-1 text-center">
+                        <p class="mb-0 text-muted small">数量</p>
+                        <strong>×{{ item.quantity }}</strong>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <p class="mb-0 text-muted small">小计</p>
+                        <strong class="text-primary">¥{{ item.get_cost }}</strong>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-4" style="border-radius: 15px; border: none;">
+            <div class="card-body">
+                <h5 class="mb-3"><i class="bi bi-person-fill"></i> 收货信息</h5>
+                <p class="mb-1"><strong>收货人：</strong> {{ order.first_name }} {{ order.last_name }}</p>
+                <p class="mb-1"><strong>邮箱：</strong> {{ order.email }}</p>
+                <p class="mb-3"><strong>地址：</strong> {{ order.address }}, {{ order.city }}, {{ order.postal_code }}</p>
+                
+                <hr>
+                
+                <h5 class="mb-3"><i class="bi bi-calculator"></i> 订单金额</h5>
+                <div class="d-flex justify-content-between mb-4">
+                    <h5>总计：</h5>
+                    <h5 class="text-primary">¥{{ order.get_total_cost }}</h5>
+                </div>
+                
+                <div class="p-3 bg-light rounded">
+                    <h6><i class="bi bi-truck"></i> 物流信息</h6>
+                    <p class="mb-0 small text-muted">订单正在处理中，预计3-5个工作日内送达。</p>
+                </div>
+            </div>
+        </div>
+        
+        <a href="{% url 'orders:order_list' %}" class="btn btn-outline-primary w-100 mb-2">
+            <i class="bi bi-arrow-left"></i> 返回订单列表
+        </a>
+        
+        <a href="{% url 'shop:product_list' %}" class="btn btn-primary w-100">
+            <i class="bi bi-shop"></i> 继续购物
+        </a>
+    </div>
+</div>
+{% endblock %}
+

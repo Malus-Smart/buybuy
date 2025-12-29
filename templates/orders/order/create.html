@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}创建订单 - BuyBuy{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="text-center mb-4">
+            <i class="bi bi-receipt"></i> 确认订单
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow-sm" style="border-radius: 15px; border: none;">
+            <div class="card-body">
+                <h4 class="mb-4"><i class="bi bi-person-fill"></i> 收货信息</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+                        <i class="bi bi-check-circle"></i> 提交订单
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow-sm" style="border-radius: 15px; border: none;">
+            <div class="card-body">
+                <h4 class="mb-4"><i class="bi bi-bag-check"></i> 订单商品</h4>
+                
+                {% for item in cart %}
+                <div class="d-flex mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                    <div class="flex-shrink-0">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" 
+                                 style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px; border-radius: 8px;">
+                                <i class="bi bi-image"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="mb-1">{{ item.product.name }}</h6>
+                        <small class="text-muted">¥{{ item.price }} × {{ item.quantity }}</small>
+                        <p class="mb-0 text-primary fw-bold">¥{{ item.total_price }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between mb-3">
+                    <span>商品数量：</span>
+                    <strong>{{ cart|length }} 件</strong>
+                </div>
+                
+                <div class="d-flex justify-content-between mb-3">
+                    <h5>总计：</h5>
+                    <h5 class="text-primary">¥{{ cart.get_total_price }}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

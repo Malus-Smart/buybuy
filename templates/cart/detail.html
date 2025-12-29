@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}购物车 - BuyBuy{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="text-center mb-4">
+            <i class="bi bi-cart-fill"></i> 我的购物车
+        </h2>
+    </div>
+</div>
+
+{% if cart %}
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow-sm" style="border-radius: 15px; border: none;">
+            <div class="card-body">
+                {% for item in cart %}
+                <div class="row mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                    <div class="col-md-2">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" class="img-fluid rounded" alt="{{ item.product.name }}">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 80px;">
+                                <i class="bi bi-image" style="font-size: 2rem; color: #cbd5e1;"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <h5>{{ item.product.name }}</h5>
+                        <p class="text-muted small">{{ item.product.category.name }}</p>
+                    </div>
+                    <div class="col-md-2">
+                        <p class="mb-0 text-muted">单价</p>
+                        <h5 class="text-primary">¥{{ item.price }}</h5>
+                    </div>
+                    <div class="col-md-2">
+                        <form action="{% url 'cart:cart_add' item.product.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            {{ item.update_quantity_form.quantity }}
+                            {{ item.update_quantity_form.override }}
+                            <button type="submit" class="btn btn-sm btn-outline-primary mt-1">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <p class="mb-0 text-muted">小计</p>
+                        <h5 class="text-primary">¥{{ item.total_price }}</h5>
+                        <form action="{% url 'cart:cart_remove' item.product.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i> 删除
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow-sm" style="border-radius: 15px; border: none;">
+            <div class="card-body">
+                <h4 class="mb-4"><i class="bi bi-calculator"></i> 订单摘要</h4>
+                
+                <div class="d-flex justify-content-between mb-3">
+                    <span>商品数量：</span>
+                    <strong>{{ cart|length }} 件</strong>
+                </div>
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between mb-4">
+                    <h5>总计：</h5>
+                    <h5 class="text-primary">¥{{ cart.get_total_price }}</h5>
+                </div>
+                
+                <a href="{% url 'orders:order_create' %}" class="btn btn-primary btn-lg w-100 mb-2">
+                    <i class="bi bi-credit-card"></i> 结算
+                </a>
+                
+                <a href="{% url 'shop:product_list' %}" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-arrow-left"></i> 继续购物
+                </a>
+                
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6><i class="bi bi-truck"></i> 配送信息</h6>
+                    <ul class="list-unstyled mb-0 small">
+                        <li><i class="bi bi-check-circle-fill text-success"></i> 全国包邮</li>
+                        <li><i class="bi bi-check-circle-fill text-success"></i> 预计3-5个工作日送达</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm text-center p-5" style="border-radius: 15px; border: none;">
+            <i class="bi bi-cart-x" style="font-size: 5rem; color: #cbd5e1;"></i>
+            <h3 class="mt-4 mb-3">购物车是空的</h3>
+            <p class="text-muted mb-4">快去挑选您喜欢的商品吧！</p>
+            <a href="{% url 'shop:product_list' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-shop"></i> 去购物
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+

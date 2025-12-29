@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if category %}{{ category.name }} - {% endif %}商品列表 - BuyBuy
+{% endblock %}
+
+{% block content %}
+<!-- 分类导航 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm" style="border-radius: 15px; border: none;">
+            <div class="card-body text-center">
+                <h5 class="mb-3"><i class="bi bi-tags-fill"></i> 商品分类</h5>
+                <a href="{% url 'shop:product_list' %}" class="category-badge {% if not category %}active{% endif %}">
+                    全部商品
+                </a>
+                {% for c in categories %}
+                    <a href="{{ c.get_absolute_url }}" class="category-badge {% if category.slug == c.slug %}active{% endif %}">
+                        {{ c.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 搜索结果提示 -->
+{% if query %}
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <i class="bi bi-search"></i> 搜索 "<strong>{{ query }}</strong>" 的结果：找到 <strong>{{ products|length }}</strong> 件商品
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- 分类标题 -->
+{% if category %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="text-center">
+            <i class="bi bi-collection-fill"></i> {{ category.name }}
+        </h2>
+    </div>
+</div>
+{% endif %}
+
+<!-- 商品网格 -->
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+    {% for product in products %}
+    <div class="col">
+        <div class="card product-card">
+            <a href="{{ product.get_absolute_url }}" class="text-decoration-none">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                        <i class="bi bi-image" style="font-size: 4rem; color: #cbd5e1;"></i>
+                    </div>
+                {% endif %}
+            </a>
+            <div class="card-body">
+                <h5 class="product-title">
+                    <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">
+                        {{ product.name }}
+                    </a>
+                </h5>
+                <p class="text-muted small mb-2">
+                    <i class="bi bi-tag"></i> {{ product.category.name }}
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="product-price">¥{{ product.price }}</span>
+                    {% if product.stock > 0 %}
+                        <span class="badge bg-success">库存：{{ product.stock }}</span>
+                    {% else %}
+                        <span class="badge bg-danger">缺货</span>
+                    {% endif %}
+                </div>
+                <a href="{{ product.get_absolute_url }}" class="btn btn-primary w-100 mt-3">
+                    <i class="bi bi-eye-fill"></i> 查看详情
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-warning text-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> 暂无商品
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
