@@ -134,6 +134,13 @@ if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('DYNO'):
     DEBUG = True  # Temporarily True for debugging
     ALLOWED_HOSTS = ['*']
     
+    # Debug: Print all environment variables that might contain database info
+    print("DEBUG: All DATABASE/PG related env vars:")
+    for key in os.environ.keys():
+        if 'DATA' in key or 'PG' in key or 'POST' in key:
+            value = os.environ[key]
+            print(f"  {key}: {value[:50]}..." if len(value) > 50 else f"  {key}: {value}")
+    
     # Database configuration for Railway/Heroku
     # Try multiple environment variable names
     database_url = (
