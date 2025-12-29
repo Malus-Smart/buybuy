@@ -130,8 +130,8 @@ LOGOUT_REDIRECT_URL = '/'
 import dj_database_url
 
 if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('DYNO'):
-    # Production mode
-    DEBUG = False
+    # Production mode - temporarily enable DEBUG to see errors
+    DEBUG = True  # Temporarily True for debugging
     ALLOWED_HOSTS = ['*']
     
     # Database configuration for Railway/Heroku
