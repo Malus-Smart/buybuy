@@ -1,1 +1,1 @@
-web: bash entrypoint.sh
+web: python manage.py migrate && gunicorn buybuy.wsgi
