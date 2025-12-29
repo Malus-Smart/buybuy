@@ -135,13 +135,23 @@ if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('DYNO'):
     ALLOWED_HOSTS = ['*']
     
     # Database configuration for Railway/Heroku
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        DATABASES = {
+            'default': dj_database_url.config(
+                default=database_url,
+                conn_max_age=600,
+                conn_health_checks=True,
+            )
+        }
+    else:
+        # Fallback to SQLite if DATABASE_URL not set
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
     
     # Static files with WhiteNoise
     if 'whitenoise.middleware.WhiteNoiseMiddleware' not in MIDDLEWARE:
