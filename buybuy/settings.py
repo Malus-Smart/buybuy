@@ -136,6 +136,8 @@ if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('DYNO'):
     
     # Database configuration for Railway/Heroku
     database_url = os.environ.get('DATABASE_URL')
+    print(f"DEBUG: DATABASE_URL exists: {database_url is not None}")
+    print(f"DEBUG: DATABASE_URL value: {database_url[:50] if database_url else 'None'}...")
     if database_url:
         DATABASES = {
             'default': dj_database_url.config(
