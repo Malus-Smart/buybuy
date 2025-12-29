@@ -18,7 +18,10 @@ urlpatterns = [
     path('', include('shop.urls', namespace='shop')),
 ]
 
+# Serve media files (user uploads)
+# Note: In production, use cloud storage (e.g., AWS S3, Cloudinary) instead
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
