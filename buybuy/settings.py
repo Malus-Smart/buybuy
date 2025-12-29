@@ -135,9 +135,31 @@ if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('DYNO'):
     ALLOWED_HOSTS = ['*']
     
     # Database configuration for Railway/Heroku
-    database_url = os.environ.get('DATABASE_URL')
+    # Try multiple environment variable names
+    database_url = (
+        os.environ.get('DATABASE_URL') or 
+        os.environ.get('DATABASE_PRIVATE_URL') or
+        os.environ.get('PGURL')
+    )
+    
+    # Or construct from individual components if available
+    if not database_url and all([
+        os.environ.get('PGHOST'),
+        os.environ.get('PGUSER'),
+        os.environ.get('PGPASSWORD'),
+        os.environ.get('PGDATABASE')
+    ]):
+        pghost = os.environ.get('PGHOST')
+        pguser = os.environ.get('PGUSER')
+        pgpassword = os.environ.get('PGPASSWORD')
+        pgdatabase = os.environ.get('PGDATABASE')
+        pgport = os.environ.get('PGPORT', '5432')
+        database_url = f"postgresql://{pguser}:{pgpassword}@{pghost}:{pgport}/{pgdatabase}"
+        print(f"DEBUG: Constructed DATABASE_URL from PG* variables")
+    
     print(f"DEBUG: DATABASE_URL exists: {database_url is not None}")
     print(f"DEBUG: DATABASE_URL value: {database_url[:50] if database_url else 'None'}...")
+    
     if database_url:
         DATABASES = {
             'default': dj_database_url.config(
@@ -146,6 +168,7 @@ if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('DYNO'):
                 conn_health_checks=True,
             )
         }
+        print(f"DEBUG: Using PostgreSQL database")
     else:
         # Fallback to SQLite if DATABASE_URL not set
         DATABASES = {
@@ -154,6 +177,7 @@ if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('DYNO'):
                 'NAME': BASE_DIR / 'db.sqlite3',
             }
         }
+        print(f"DEBUG: Falling back to SQLite")
     
     # Static files with WhiteNoise
     if 'whitenoise.middleware.WhiteNoiseMiddleware' not in MIDDLEWARE:
